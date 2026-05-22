@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>3D TRONICA Manager</title>
+  <meta name="description" content="Gestión de pedidos, inventario, gastos y presupuestos para emprendimiento de impresión 3D"/>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-logo">
+      <img src="images/logo.png.png" class="logo-img" alt="3D Tronica Logo" onerror="this.style.display='none'"/>
+      <span class="logo-text">3D <strong>TRONICA</strong></span>
+    </div>
+    <nav class="header-nav">
+      <button class="nav-item active" data-section="pedidos"><i class="fas fa-box-open"></i><span>Pedidos</span></button>
+      <button class="nav-item" data-section="inventario"><i class="fas fa-layer-group"></i><span>Inventario</span></button>
+      <button class="nav-item" data-section="gastos"><i class="fas fa-receipt"></i><span>Gastos</span></button>
+      <button class="nav-item" data-section="presupuestos"><i class="fas fa-file-invoice-dollar"></i><span>Presupuestos</span></button>
+    </nav>
+    <div class="header-actions">
+      <button class="icon-btn" id="btn-import" title="Importar datos"><i class="fas fa-upload"></i></button>
+      <button class="icon-btn" id="btn-export" title="Exportar datos"><i class="fas fa-download"></i></button>
+      <input type="file" id="import-file" accept=".json" style="display:none"/>
+    </div>
+  </header>
+
+  <div class="app-container">
+    <main class="main-content">
+
+      <!-- ===== PEDIDOS ===== -->
+      <section class="section active" id="section-pedidos">
+        <div class="section-header">
+          <div>
+            <h1>Pedidos</h1>
+            <p class="subtitle">Gestión de órdenes de impresión</p>
+          </div>
+          <button class="btn-primary" id="btn-new-pedido"><i class="fas fa-plus"></i> Nuevo Pedido</button>
+        </div>
+        <div class="stats-row" id="stats-pedidos"></div>
+        <div class="filters-bar">
+          <input type="text" class="search-input" id="search-pedidos" placeholder="🔍 Buscar cliente o producto..."/>
+          <select class="filter-select" id="filter-pedidos-estado">
+            <option value="">Todos los estados</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="en_proceso">En proceso</option>
+            <option value="listo">Listo</option>
+            <option value="entregado">Entregado</option>
+          </select>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead><tr>
+              <th>#</th><th>Cliente</th><th>Producto</th><th>Material</th>
+              <th>Cant.</th><th>Precio</th><th>Fecha</th><th>Estado</th><th>Acciones</th>
+            </tr></thead>
+            <tbody id="tbody-pedidos"></tbody>
+          </table>
+          <div class="empty-state" id="empty-pedidos"><i class="fas fa-box-open"></i><p>No hay pedidos registrados</p></div>
+        </div>
+      </section>
+
+      <!-- ===== INVENTARIO ===== -->
+      <section class="section" id="section-inventario">
+        <div class="section-header">
+          <div>
+            <h1>Inventario</h1>
+            <p class="subtitle">Stock de los productos disponibles</p>
+          </div>
+          <button class="btn-primary" id="btn-new-insumo"><i class="fas fa-plus"></i> Nuevo Producto</button>
+        </div>
+        <div class="stats-row" id="stats-inventario"></div>
+        <div class="filters-bar">
+          <input type="text" class="search-input" id="search-inventario" placeholder="🔍 Buscar producto..."/>
+          <select class="filter-select" id="filter-inventario-cat">
+            <option value="">Todas las categorías</option>
+            <option value="figura">Figura</option>
+            <option value="llavero">Llavero</option>
+            <option value="maceta">Maceta</option>
+            <option value="decoracion">Decoración</option>
+            <option value="repuesto">Repuesto</option>
+            <option value="otro">Otro</option>
+          </select>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead><tr>
+              <th>#</th><th>Nombre</th><th>Categoría</th><th>Cantidad</th>
+              <th>Variante</th><th>Stock mín.</th><th>Precio</th><th>Estado</th><th>Acciones</th>
+            </tr></thead>
+            <tbody id="tbody-inventario"></tbody>
+          </table>
+          <div class="empty-state" id="empty-inventario"><i class="fas fa-layer-group"></i><p>No hay productos registrados</p></div>
+        </div>
+      </section>
+
+      <!-- ===== GASTOS ===== -->
+      <section class="section" id="section-gastos">
+        <div class="section-header">
+          <div>
+            <h1>Gastos</h1>
+            <p class="subtitle">Control de egresos del negocio</p>
+          </div>
+          <button class="btn-primary" id="btn-new-gasto"><i class="fas fa-plus"></i> Nuevo Gasto</button>
+        </div>
+        <div class="stats-row" id="stats-gastos"></div>
+        <div class="filters-bar">
+          <input type="text" class="search-input" id="search-gastos" placeholder="🔍 Buscar gasto..."/>
+          <select class="filter-select" id="filter-gastos-cat">
+            <option value="">Todas las categorías</option>
+            <option value="material">Material</option>
+            <option value="energia">Energía</option>
+            <option value="mantenimiento">Mantenimiento</option>
+            <option value="herramienta">Herramienta</option>
+            <option value="envio">Envío</option>
+            <option value="otro">Otro</option>
+          </select>
+          <select class="filter-select" id="filter-gastos-mes"><option value="">Todos los meses</option></select>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead><tr>
+              <th>#</th><th>Descripción</th><th>Categoría</th><th>Monto</th><th>Fecha</th><th>Nota</th><th>Acciones</th>
+            </tr></thead>
+            <tbody id="tbody-gastos"></tbody>
+          </table>
+          <div class="empty-state" id="empty-gastos"><i class="fas fa-receipt"></i><p>No hay gastos registrados</p></div>
+        </div>
+      </section>
+
+      <!-- ===== PRESUPUESTOS ===== -->
+      <section class="section" id="section-presupuestos">
+        <div class="section-header">
+          <div>
+            <h1>Presupuestos</h1>
+            <p class="subtitle">Cotizaciones para clientes</p>
+          </div>
+          <button class="btn-primary" id="btn-new-presupuesto"><i class="fas fa-plus"></i> Nuevo Presupuesto</button>
+        </div>
+        <div class="stats-row" id="stats-presupuestos"></div>
+        <div class="filters-bar">
+          <input type="text" class="search-input" id="search-presupuestos" placeholder="🔍 Buscar presupuesto..."/>
+          <select class="filter-select" id="filter-presupuestos-estado">
+            <option value="">Todos los estados</option>
+            <option value="borrador">Borrador</option>
+            <option value="enviado">Enviado</option>
+            <option value="aprobado">Aprobado</option>
+            <option value="rechazado">Rechazado</option>
+          </select>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead><tr>
+              <th>#</th><th>Cliente</th><th>Descripción</th><th>Material</th>
+              <th>Tiempo est.</th><th>Total</th><th>Fecha</th><th>Estado</th><th>Acciones</th>
+            </tr></thead>
+            <tbody id="tbody-presupuestos"></tbody>
+          </table>
+          <div class="empty-state" id="empty-presupuestos"><i class="fas fa-file-invoice-dollar"></i><p>No hay presupuestos registrados</p></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ===== MODAL PEDIDO ===== -->
+  <div class="modal-overlay" id="modal-pedido">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modal-pedido-title">Nuevo Pedido</h2>
+        <button class="modal-close" data-modal="modal-pedido"><i class="fas fa-times"></i></button>
+      </div>
+      <form id="form-pedido" class="modal-form">
+        <input type="hidden" id="pedido-id"/>
+        <div class="form-row">
+          <div class="form-group"><label>Cliente *</label><input type="text" id="pedido-cliente" placeholder="Nombre del cliente" required/></div>
+          <div class="form-group"><label>Producto / Pieza *</label><input type="text" id="pedido-producto" placeholder="Ej: Llavero, figura..." required/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Material</label><input type="text" id="pedido-material" placeholder="PLA, ABS, PETG, Resina..."/></div>
+          <div class="form-group"><label>Color</label><input type="text" id="pedido-color" placeholder="Rojo, Negro, Blanco..."/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Cantidad</label><input type="number" id="pedido-cantidad" value="1" min="1"/></div>
+          <div class="form-group"><label>Precio Total ($)</label><input type="number" id="pedido-precio" placeholder="0.00" step="0.01" min="0"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Fecha de entrega</label><input type="date" id="pedido-fecha"/></div>
+          <div class="form-group"><label>Estado</label>
+            <select id="pedido-estado">
+              <option value="pendiente">Pendiente</option>
+              <option value="en_proceso">En proceso</option>
+              <option value="listo">Listo</option>
+              <option value="entregado">Entregado</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group full"><label>Notas</label><textarea id="pedido-notas" rows="3" placeholder="Detalles, especificaciones..."></textarea></div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" data-modal="modal-pedido">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== MODAL INSUMO ===== -->
+  <div class="modal-overlay" id="modal-insumo">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modal-insumo-title">Nuevo Producto</h2>
+        <button class="modal-close" data-modal="modal-insumo"><i class="fas fa-times"></i></button>
+      </div>
+      <form id="form-insumo" class="modal-form">
+        <input type="hidden" id="insumo-id"/>
+        <div class="form-row">
+          <div class="form-group"><label>Nombre *</label><input type="text" id="insumo-nombre" placeholder="Ej: Llavero Articulado Groot" required/></div>
+          <div class="form-group"><label>Categoría</label>
+            <select id="insumo-categoria">
+              <option value="figura">Figura</option><option value="llavero">Llavero</option>
+              <option value="maceta">Maceta</option><option value="decoracion">Decoración</option>
+              <option value="repuesto">Repuesto</option><option value="otro">Otro</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Cantidad en stock</label><input type="number" id="insumo-cantidad" placeholder="0" step="1" min="0"/></div>
+          <div class="form-group"><label>Variante (Color/Tamaño)</label>
+            <input type="text" id="insumo-unidad" placeholder="Ej: Rojo / 15cm"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Stock mínimo</label><input type="number" id="insumo-stock-min" placeholder="0" step="1" min="0"/></div>
+          <div class="form-group"><label>Precio de venta ($)</label><input type="number" id="insumo-costo" placeholder="0.00" step="0.01" min="0"/></div>
+        </div>
+        <div class="form-group full"><label>Materiales usados</label><input type="text" id="insumo-proveedor" placeholder="Ej: PLA, 25g..."/></div>
+        <div class="form-group full"><label>Notas</label><textarea id="insumo-notas" rows="2" placeholder="Observaciones..."></textarea></div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" data-modal="modal-insumo">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== MODAL GASTO ===== -->
+  <div class="modal-overlay" id="modal-gasto">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modal-gasto-title">Nuevo Gasto</h2>
+        <button class="modal-close" data-modal="modal-gasto"><i class="fas fa-times"></i></button>
+      </div>
+      <form id="form-gasto" class="modal-form">
+        <input type="hidden" id="gasto-id"/>
+        <div class="form-row">
+          <div class="form-group"><label>Descripción *</label><input type="text" id="gasto-descripcion" placeholder="¿En qué se gastó?" required/></div>
+          <div class="form-group"><label>Categoría</label>
+            <select id="gasto-categoria">
+              <option value="material">Material</option><option value="energia">Energía</option>
+              <option value="mantenimiento">Mantenimiento</option><option value="herramienta">Herramienta</option>
+              <option value="envio">Envío</option><option value="otro">Otro</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Monto ($) *</label><input type="number" id="gasto-monto" placeholder="0.00" step="0.01" min="0" required/></div>
+          <div class="form-group"><label>Fecha *</label><input type="date" id="gasto-fecha" required/></div>
+        </div>
+        <div class="form-group full"><label>Nota / Comprobante</label><textarea id="gasto-nota" rows="2" placeholder="Número de factura, detalles..."></textarea></div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" data-modal="modal-gasto">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== MODAL PRESUPUESTO ===== -->
+  <div class="modal-overlay" id="modal-presupuesto">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modal-presupuesto-title">Nuevo Presupuesto</h2>
+        <button class="modal-close" data-modal="modal-presupuesto"><i class="fas fa-times"></i></button>
+      </div>
+      <form id="form-presupuesto" class="modal-form">
+        <input type="hidden" id="presupuesto-id"/>
+        <div class="form-row">
+          <div class="form-group"><label>Cliente *</label><input type="text" id="presupuesto-cliente" placeholder="Nombre del cliente" required/></div>
+          <div class="form-group"><label>Descripción *</label><input type="text" id="presupuesto-descripcion" placeholder="Qué se va a imprimir..." required/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Material</label><input type="text" id="presupuesto-material" placeholder="PLA, ABS, Resina..."/></div>
+          <div class="form-group"><label>Tiempo estimado</label><input type="text" id="presupuesto-tiempo" placeholder="Ej: 4 horas, 2 días..."/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Costo material ($)</label><input type="number" id="presupuesto-costo-material" placeholder="0.00" step="0.01" min="0"/></div>
+          <div class="form-group"><label>Costo trabajo ($)</label><input type="number" id="presupuesto-costo-trabajo" placeholder="0.00" step="0.01" min="0"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Total ($)</label><input type="number" id="presupuesto-total" placeholder="0.00" step="0.01" min="0"/></div>
+          <div class="form-group"><label>Estado</label>
+            <select id="presupuesto-estado">
+              <option value="borrador">Borrador</option><option value="enviado">Enviado</option>
+              <option value="aprobado">Aprobado</option><option value="rechazado">Rechazado</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group full"><label>Notas</label><textarea id="presupuesto-notas" rows="3" placeholder="Condiciones, detalles..."></textarea></div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" data-modal="modal-presupuesto">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Confirmar -->
+  <div class="modal-overlay" id="modal-confirm">
+    <div class="modal modal-sm">
+      <div class="modal-header"><h2>Confirmar eliminación</h2></div>
+      <div style="padding:1.5rem 2rem"><p style="color:var(--text-secondary)">¿Estás seguro de que querés eliminar este registro? Esta acción no se puede deshacer.</p></div>
+      <div class="modal-actions" style="padding:0 2rem 1.5rem">
+        <button type="button" class="btn-secondary" id="confirm-cancel">Cancelar</button>
+        <button type="button" class="btn-danger" id="confirm-ok">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="renderer.js"></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "3D TRONICA Manager",
+  "version": "1.0",
+  "description": "Gestión de pedidos, inventario, gastos y presupuestos para emprendimiento de impresión 3D",
+  "action": {
+    "default_title": "Abrir 3D TRONICA Manager",
+    "default_icon": "images/logo.png.png"
+  },
+  "icons": {
+    "16": "images/logo.png.png",
+    "48": "images/logo.png.png",
+    "128": "images/logo.png.png"
+  },
+  "permissions": [
+    "storage",
+    "unlimitedStorage"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}
